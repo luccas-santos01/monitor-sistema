@@ -1,0 +1,37 @@
+# .NET
+back-end/bin/
+back-end/obj/
+back-end/.vs/
+back-end/.vscode/
+*.user
+*.suo
+*.csproj.user
+*.csproj.bak
+
+# Node/React
+front-end/node_modules/
+front-end/dist/
+front-end/.env
+front-end/.env.local
+front-end/.env.development.local
+front-end/.env.production.local
+front-end/npm-debug.log*
+front-end/yarn-debug.log*
+front-end/yarn-error.log*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Build outputs
+**/build/
+**/dist/
+**/.next/
+**/out/
