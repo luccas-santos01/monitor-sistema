@@ -15,13 +15,33 @@ function App() {
   useEffect(() => {
     const timer = setTimeout(() => {
       axios.get('/api/metrics')
-        .then(response => setMetrics(response.data))
+        .then(response => {
+          const data = response.data;
+          setMetrics({
+            cpu: data.cpuUsage,
+            memory: data.memoryUsage,
+            disk: data.diskUsage,
+            processes: data.processCount,
+            uptime: data.uptime,
+            timestamp: new Date(data.timestamp).toLocaleString()
+          });
+        })
         .catch(console.error)
     }, 0)
 
     const interval = setInterval(() => {
       axios.get('/api/metrics')
-        .then(response => setMetrics(response.data))
+        .then(response => {
+          const data = response.data;
+          setMetrics({
+            cpu: data.cpuUsage,
+            memory: data.memoryUsage,
+            disk: data.diskUsage,
+            processes: data.processCount,
+            uptime: data.uptime,
+            timestamp: new Date(data.timestamp).toLocaleString()
+          });
+        })
         .catch(console.error)
     }, 5000)
 
@@ -116,9 +136,9 @@ function App() {
                   <p className="text-gray-300 text-sm">{item.description}</p>
                 </div>
                 <div className="text-right">
-                  <div className={`text-5xl font-bold text-${item.color}-400`}>
+                  <div className={`text-4xl font-bold text-${item.color}-400`}>
                     {item.value}
-                    <span className="text-2xl">{item.unit}</span>
+                    <span className="text-xl">{item.unit}</span>
                   </div>
                 </div>
               </div>
@@ -152,12 +172,12 @@ function App() {
             </div>
             
             <div className="text-center p-6 bg-gradient-to-br from-blue-500/20 to-blue-600/20 rounded-xl border border-blue-500/30">
-              <div className="text-4xl font-bold text-blue-400 mb-2">{metrics.processes}</div>
+              <div className="text-3xl font-bold text-blue-400 mb-2">{metrics.processes}</div>
               <div className="text-blue-300">Processos Ativos</div>
             </div>
             
             <div className="text-center p-6 bg-gradient-to-br from-purple-500/20 to-purple-600/20 rounded-xl border border-purple-500/30">
-              <div className="text-4xl font-bold text-purple-400 mb-2">
+              <div className="text-3xl font-bold text-purple-400 mb-2">
                 {Math.floor(metrics.uptime / 3600)}h
               </div>
               <div className="text-purple-300">Tempo de Atividade</div>

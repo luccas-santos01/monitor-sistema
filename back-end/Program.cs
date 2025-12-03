@@ -1,50 +1,47 @@
+using MonitorBackend.Services;
+using Microsoft.AspNetCore.Mvc;
+
+#pragma warning disable CA1416 // Suprimir aviso de plataforma para WindowsMetricsService
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services
+// Serviço Windows (dados REAIS)
+builder.Services.AddSingleton<ISystemMetricsService, WindowsMetricsService>();
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Configure CORS para permitir o Vite
+// CORS para o React
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowVite",
+    options.AddPolicy("AllowReactApp",
         policy => policy
-            .WithOrigins("http://localhost:5173") // Porta padrão do Vite
+            .WithOrigins("http://localhost:5173", "http://localhost:5174", "http://localhost:5175")
             .AllowAnyHeader()
             .AllowAnyMethod());
 });
 
 var app = builder.Build();
 
-// Configure pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-app.UseCors("AllowVite");
+app.UseCors("AllowReactApp");
 app.UseAuthorization();
 app.MapControllers();
 
-// Endpoint simples de teste
-app.MapGet("/", () => "🚀 Backend .NET 8 funcionando!");
-app.MapGet("/api/health", () => new { status = "healthy", timestamp = DateTime.UtcNow });
+// Endpoint simples
+app.MapGet("/", () => "✅ Backend Windows com dados REAIS");
 
-// Endpoint de métricas (mockado por enquanto)
-app.MapGet("/api/metrics", () =>
+// Endpoint principal
+app.MapGet("/api/metrics", async ([FromServices] ISystemMetricsService metricsService) =>
 {
-    var random = new Random();
-    return new
-    {
-        cpu = Math.Round(random.NextDouble() * 100, 1),
-        memory = Math.Round(60 + random.NextDouble() * 30, 1),
-        disk = Math.Round(40 + random.NextDouble() * 40, 1),
-        processes = random.Next(100, 300),
-        uptime = random.Next(3600, 86400),
-        timestamp = DateTime.UtcNow
-    };
+    var metrics = await metricsService.GetMetricsAsync();
+    return Results.Ok(metrics);
 });
 
 app.Run();
